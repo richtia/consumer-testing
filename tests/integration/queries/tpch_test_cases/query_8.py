@@ -1,3 +1,6 @@
+import pytest
+from ....common import get_substrait_plan
+
 TESTCASE = [
     {
         "test_name": "test_tpch_sql_8",
@@ -38,8 +41,6 @@ TESTCASE = [
             ORDER BY
                 o_year
             """,
-        "substrait_query":
-            """
-            """,
+        "substrait_query": get_substrait_plan('query_8_plan.json')
     }
 ]

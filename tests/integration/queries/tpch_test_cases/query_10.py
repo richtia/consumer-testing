@@ -1,3 +1,6 @@
+import pytest
+from ....common import get_substrait_plan
+
 TESTCASE = [
     {
         "test_name": "test_tpch_sql_10",
@@ -35,8 +38,6 @@ TESTCASE = [
                 revenue DESC
             LIMIT 20;
             """,
-        "substrait_query":
-            """
-            """,
+        "substrait_query": get_substrait_plan('query_10_plan.json')
     }
 ]

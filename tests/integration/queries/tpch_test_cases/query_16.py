@@ -1,3 +1,6 @@
+import pytest
+from ....common import get_substrait_plan
+
 TESTCASE = [
     {
         "test_name": "test_tpch_sql_16",
@@ -33,8 +36,6 @@ TESTCASE = [
                 p_type,
                 p_size;
             """,
-        "substrait_query":
-            """
-            """,
+        "substrait_query": get_substrait_plan('query_16_plan.json')
     }
 ]

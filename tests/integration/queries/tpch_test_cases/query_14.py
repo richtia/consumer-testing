@@ -1,3 +1,6 @@
+import pytest
+from ....common import get_substrait_plan
+
 TESTCASE = [
     {
         "test_name": "test_tpch_sql_14",
@@ -18,8 +21,6 @@ TESTCASE = [
                 AND l_shipdate >= date '1995-09-01'
                 AND l_shipdate < CAST('1995-10-01' AS date);
             """,
-        "substrait_query":
-            """
-            """,
+        "substrait_query": get_substrait_plan('query_14_plan.json')
     }
 ]

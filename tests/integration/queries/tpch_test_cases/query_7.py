@@ -1,4 +1,5 @@
 import pytest
+from ....common import get_substrait_plan
 
 TESTCASE = [
     {
@@ -44,8 +45,6 @@ TESTCASE = [
                 cust_nation,
                 l_year
             """,
-        "substrait_query":
-            """
-            """,
+        "substrait_query": get_substrait_plan('query_7_plan.json')
     }
 ]
