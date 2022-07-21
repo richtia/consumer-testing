@@ -3,8 +3,6 @@ from ....common import get_substrait_plan
 
 TESTCASE = [
     {
-        "pytest_mark": pytest.mark.skip(reason="Issue with isthmus converting "
-                                               "the SQL"),
         "test_name": "test_tpch_sql_7",
         "file_names": ["supplier_1.parquet", "lineitem_1.parquet",
                        "orders_1.parquet", "customer_1.parquet",
