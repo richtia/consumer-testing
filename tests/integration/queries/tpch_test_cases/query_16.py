@@ -1,41 +1,12 @@
 import pytest
-from ....common import get_substrait_plan
+
+from ....common import get_sql, get_substrait_plan
 
 TESTCASE = [
     {
         "test_name": "test_tpch_sql_16",
-        "file_names": ["partsupp_1.parquet", "part_1.parquet", "supplier_1.parquet"],
-        "sql_query":
-            """
-            SELECT
-                p_brand,
-                p_type,
-                p_size,
-                count(DISTINCT ps_suppkey) AS supplier_cnt
-            FROM
-                '{}', '{}'
-            WHERE
-                p_partkey = ps_partkey
-                AND p_brand <> 'Brand#45'
-                AND p_type NOT LIKE 'MEDIUM POLISHED%'
-                AND p_size IN (49, 14, 23, 45, 19, 3, 36, 9)
-                AND ps_suppkey NOT IN (
-                    SELECT
-                        s_suppkey
-                    FROM
-                        '{}'
-                    WHERE
-                        s_comment LIKE '%Customer%Complaints%')
-            GROUP BY
-                p_brand,
-                p_type,
-                p_size
-            ORDER BY
-                supplier_cnt DESC,
-                p_brand,
-                p_type,
-                p_size;
-            """,
-        "substrait_query": get_substrait_plan('query_16_plan.json')
+        "file_names": ["partsupp.parquet", "part.parquet", "supplier.parquet"],
+        "sql_query": get_sql("q16.sql"),
+        "substrait_query": get_substrait_plan("query_16_plan.json"),
     }
 ]
