@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import string
 from pathlib import Path
 from typing import Iterable
@@ -28,7 +29,7 @@ class DuckDBConsumer:
     def set_db_connection(self, db_connection):
         self.db_connection = db_connection
 
-    def run_substrait_query(self, substrait_query: bytes) -> pa.Table:
+    async def run_substrait_query(self, substrait_query: bytes) -> pa.Table:
         """
         Run the substrait plan against DuckDB.
 
@@ -89,7 +90,7 @@ class AceroConsumer:
         self.db_connection = db_connection
 
     @staticmethod
-    def run_substrait_query(substrait_query: bytes) -> pa.Table:
+    async def run_substrait_query(substrait_query: bytes) -> pa.Table:
         """
         Run the substrait plan against Acero.
 

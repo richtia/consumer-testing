@@ -1,3 +1,4 @@
+import asyncio
 from typing import Callable, Iterable
 
 import duckdb
@@ -47,7 +48,8 @@ class TestArithmeticFunctions:
         cls.db_connection.close()
 
     @custom_parametrization(SCALAR_FUNCTIONS + AGGREGATE_FUNCTIONS)
-    def test_arithmetic_functions(
+    @pytest.mark.asyncio
+    async def test_arithmetic_functions(
         self,
         test_name: str,
         file_names: Iterable[str],
@@ -91,8 +93,12 @@ class TestArithmeticFunctions:
         else:
             substrait_plan = producer.produce_substrait(sql_query, consumer)
 
-        actual_result = consumer.run_substrait_query(substrait_plan)
+        actual_res_task = asyncio.create_task(consumer.run_substrait_query(substrait_plan))
+        # expected_res_task = asyncio.create_task()
+
+        # actual_result = consumer.run_substrait_query(substrait_plan)
         expected_result = self.db_connection.query(f"{sql_query}").arrow()
+        actual_result = await actual_res_task
 
         verify_equals(
             actual_result.columns,
