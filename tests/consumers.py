@@ -4,6 +4,7 @@ import asyncio
 import string
 from pathlib import Path
 from typing import Iterable
+from functools import wraps, partial
 
 import duckdb
 import pyarrow as pa
@@ -40,7 +41,9 @@ class DuckDBConsumer:
         Returns:
             A pyarrow table resulting from running the substrait query plan.
         """
-        return self.db_connection.from_substrait(substrait_query).arrow()
+        async_from_substrait = async_wrap(self.db_connection.from_substrait)
+        table = await async_from_substrait(substrait_query)
+        return table.arrow()
 
     def load_tables_from_parquet(
         self,
@@ -136,3 +139,13 @@ class AceroConsumer:
             table_names.append(table_name)
 
         return table_names
+
+
+def async_wrap(func):
+    @wraps(func)
+    async def run(*args, loop=None, executor=None, **kwargs):
+        if loop is None:
+            loop = asyncio.get_event_loop()
+        pfunc = partial(func, *args, **kwargs)
+        return await loop.run_in_executor(executor, pfunc)
+    return run

@@ -1,5 +1,6 @@
 import asyncio
 from typing import Callable, Iterable
+from functools import wraps, partial
 
 import duckdb
 from ibis.expr.types.relations import Table
@@ -97,8 +98,10 @@ class TestArithmeticFunctions:
         # expected_res_task = asyncio.create_task()
 
         # actual_result = consumer.run_substrait_query(substrait_plan)
-        expected_result = self.db_connection.query(f"{sql_query}").arrow()
+        async_run_sql = async_wrap(self.db_connection.query)
         actual_result = await actual_res_task
+        expected_result = await async_run_sql(f"{sql_query}")
+        expected_result = expected_result.arrow()
 
         verify_equals(
             actual_result.columns,
@@ -107,3 +110,13 @@ class TestArithmeticFunctions:
             f"is not equal to the expected: "
             f"{expected_result.columns}",
         )
+
+
+def async_wrap(func):
+    @wraps(func)
+    async def run(*args, loop=None, executor=None, **kwargs):
+        if loop is None:
+            loop = asyncio.get_event_loop()
+        pfunc = partial(func, *args, **kwargs)
+        return await loop.run_in_executor(executor, pfunc)
+    return run
