@@ -7,7 +7,10 @@ from google.protobuf import json_format
 import duckdb
 
 from tests.common import SubstraitUtils
+from tests.context import produce_substrait, get_schema
 from ibis_substrait.compiler.core import SubstraitCompiler
+
+schema_file = "/Users/richardtia/Voltron/consumer-testing2/tests/schema.sql"
 
 
 class DuckDBProducer:
@@ -109,6 +112,68 @@ class IbisProducer:
                 tpch_proto_bytes
             )
         return substrait_plan
+
+    def load_tables_from_parquet(
+            self,
+            created_tables: set,
+            file_names: Iterable[str],
+    ) -> list:
+        """
+        Load all the parquet files into separate tables in DuckDB.
+
+        Parameters:
+            created_tables:
+                The set of tables that have already been created.
+            file_names:
+                Name of parquet files.
+        Returns:
+            A list of the table names.
+        """
+        parquet_file_paths = SubstraitUtils.get_full_path(file_names)
+        table_names = []
+        for file_name, file_path in zip(file_names, parquet_file_paths):
+            table_name = Path(file_name).stem
+            table_name = table_name.translate(str.maketrans("", "", string.punctuation))
+            if table_name not in created_tables:
+                create_table_sql = f"CREATE TABLE {table_name} AS SELECT * FROM read_parquet('{file_path}');"
+                self.db_connection.execute(create_table_sql)
+                created_tables.add(table_name)
+            table_names.append(table_name)
+
+        return table_names
+
+
+class IsthmusProducer:
+    def __init__(self, db_connection=None):
+        if db_connection is not None:
+            self.db_connection = db_connection
+        else:
+            self.db_connection = duckdb.connect()
+
+        self.db_connection.execute("INSTALL substrait")
+        self.db_connection.execute("LOAD substrait")
+        self.compiler = SubstraitCompiler()
+
+    def set_db_connection(self, db_connection):
+        self.db_connection = db_connection
+
+    def produce_substrait(self, sql_query: str, consumer,
+                          ibis_expr: str = None) -> bytes:
+        """
+        Produce the Isthmus substrait plan using the given SQL query.
+
+        Parameters:
+            sql_query:
+                SQL query.
+            consumer:
+                Name of substrait consumer.
+        Returns:
+            Substrait query plan in byte format.
+        """
+        schema_list = get_schema(schema_file)
+        substrait_plan_str = produce_substrait(sql_query, schema_list)
+
+        return substrait_plan_str
 
     def load_tables_from_parquet(
             self,
