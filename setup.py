@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(
-    name='substrait-consumer',
+    name='substrait-consumer-test19',
     version='0.0.1',
     author='Substrait',
     description='A Substrait consumer test bench',
@@ -10,7 +10,14 @@ setup(
     python_requires='>=3.9, <4',
     packages=find_packages(include=['substrait_consumer*', 'substrait_consumer.*']),
     package_data={
+        'substrait_consumer': ['tests/integration/queries/tpch_sql/*.sql',
+                               'tests/integration/queries/tpch_substrait_plans/*.json'],
         'tests': ['tests/integration',
                   'tests/functional'],
+    },
+    entry_points={
+        'console_scripts': [
+            'test_substrait = substrait_consumer:main',
+        ]
     }
 )
