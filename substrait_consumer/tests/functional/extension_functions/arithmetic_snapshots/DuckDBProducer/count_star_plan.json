@@ -3,7 +3,7 @@
     {
       "extensionFunction": {
         "functionAnchor": 1,
-        "name": "is_not_null"
+        "name": "count"
       }
     }
   ],
@@ -13,35 +13,44 @@
         "input": {
           "project": {
             "input": {
-              "filter": {
+              "aggregate": {
                 "input": {
                   "read": {
                     "baseSchema": {
                       "names": [
-                        "a",
-                        "b",
-                        "c",
-                        "d"
+                        "ps_partkey",
+                        "ps_suppkey",
+                        "ps_availqty",
+                        "ps_supplycost",
+                        "ps_comment"
                       ],
                       "struct": {
                         "types": [
                           {
-                            "i64": {
+                            "i32": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "i64": {
+                            "i32": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "bool": {
+                            "i32": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "bool": {
+                            "decimal": {
+                              "scale": 2,
+                              "precision": 15,
+                              "nullability": "NULLABILITY_NULLABLE"
+                            }
+                          },
+                          {
+                            "varchar": {
+                              "length": 198,
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           }
@@ -49,46 +58,28 @@
                         "nullability": "NULLABILITY_REQUIRED"
                       }
                     },
-                    "projection": {
-                      "select": {
-                        "structItems": [
-                          {},
-                          {
-                            "field": 1
-                          }
-                        ]
-                      },
-                      "maintainSingularStruct": true
-                    },
                     "namedTable": {
                       "names": [
-                        "t"
+                        "partsupp"
                       ]
                     }
                   }
                 },
-                "condition": {
-                  "scalarFunction": {
-                    "functionReference": 1,
-                    "outputType": {
-                      "bool": {
-                        "nullability": "NULLABILITY_NULLABLE"
-                      }
-                    },
-                    "arguments": [
-                      {
-                        "value": {
-                          "selection": {
-                            "directReference": {
-                              "structField": {}
-                            },
-                            "rootReference": {}
-                          }
+                "groupings": [
+                  {}
+                ],
+                "measures": [
+                  {
+                    "measure": {
+                      "functionReference": 1,
+                      "outputType": {
+                        "i64": {
+                          "nullability": "NULLABILITY_NULLABLE"
                         }
                       }
-                    ]
+                    }
                   }
-                }
+                ]
               }
             },
             "expressions": [
@@ -99,23 +90,12 @@
                   },
                   "rootReference": {}
                 }
-              },
-              {
-                "selection": {
-                  "directReference": {
-                    "structField": {
-                      "field": 1
-                    }
-                  },
-                  "rootReference": {}
-                }
               }
             ]
           }
         },
         "names": [
-          "a",
-          "b"
+          "count_star()"
         ]
       }
     }
