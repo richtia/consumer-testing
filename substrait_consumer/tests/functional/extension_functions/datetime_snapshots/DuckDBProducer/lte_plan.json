@@ -1,9 +1,16 @@
 {
+  "extensionUris": [
+    {
+      "extensionUriAnchor": 1,
+      "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/"
+    }
+  ],
   "extensions": [
     {
       "extensionFunction": {
+        "extensionUriReference": 1,
         "functionAnchor": 1,
-        "name": "lte"
+        "name": "lte:date_date"
       }
     }
   ],
@@ -11,9 +18,9 @@
     {
       "root": {
         "input": {
-          "fetch": {
+          "project": {
             "input": {
-              "project": {
+              "fetch": {
                 "input": {
                   "read": {
                     "baseSchema": {
@@ -38,29 +45,22 @@
                       "struct": {
                         "types": [
                           {
-                            "i32": {
+                            "i64": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "i32": {
+                            "i64": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "i32": {
+                            "i64": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "i32": {
-                              "nullability": "NULLABILITY_NULLABLE"
-                            }
-                          },
-                          {
-                            "decimal": {
-                              "scale": 2,
-                              "precision": 15,
+                            "i64": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
@@ -86,14 +86,19 @@
                             }
                           },
                           {
-                            "varchar": {
-                              "length": 1,
+                            "decimal": {
+                              "scale": 2,
+                              "precision": 15,
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "varchar": {
-                              "length": 1,
+                            "string": {
+                              "nullability": "NULLABILITY_NULLABLE"
+                            }
+                          },
+                          {
+                            "string": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
@@ -113,20 +118,17 @@
                             }
                           },
                           {
-                            "varchar": {
-                              "length": 17,
+                            "string": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "varchar": {
-                              "length": 7,
+                            "string": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           {
-                            "varchar": {
-                              "length": 43,
+                            "string": {
                               "nullability": "NULLABILITY_NULLABLE"
                             }
                           }
@@ -154,63 +156,63 @@
                     }
                   }
                 },
-                "expressions": [
-                  {
-                    "selection": {
-                      "directReference": {
-                        "structField": {}
-                      },
-                      "rootReference": {}
-                    }
-                  },
-                  {
-                    "selection": {
-                      "directReference": {
-                        "structField": {
-                          "field": 1
-                        }
-                      },
-                      "rootReference": {}
-                    }
-                  },
-                  {
-                    "scalarFunction": {
-                      "functionReference": 1,
-                      "outputType": {
-                        "bool": {
-                          "nullability": "NULLABILITY_NULLABLE"
-                        }
-                      },
-                      "arguments": [
-                        {
-                          "value": {
-                            "selection": {
-                              "directReference": {
-                                "structField": {}
-                              },
-                              "rootReference": {}
-                            }
-                          }
-                        },
-                        {
-                          "value": {
-                            "selection": {
-                              "directReference": {
-                                "structField": {
-                                  "field": 1
-                                }
-                              },
-                              "rootReference": {}
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
+                "count": "10"
               }
             },
-            "count": "10"
+            "expressions": [
+              {
+                "selection": {
+                  "directReference": {
+                    "structField": {}
+                  },
+                  "rootReference": {}
+                }
+              },
+              {
+                "selection": {
+                  "directReference": {
+                    "structField": {
+                      "field": 1
+                    }
+                  },
+                  "rootReference": {}
+                }
+              },
+              {
+                "scalarFunction": {
+                  "functionReference": 1,
+                  "outputType": {
+                    "bool": {
+                      "nullability": "NULLABILITY_NULLABLE"
+                    }
+                  },
+                  "arguments": [
+                    {
+                      "value": {
+                        "selection": {
+                          "directReference": {
+                            "structField": {}
+                          },
+                          "rootReference": {}
+                        }
+                      }
+                    },
+                    {
+                      "value": {
+                        "selection": {
+                          "directReference": {
+                            "structField": {
+                              "field": 1
+                            }
+                          },
+                          "rootReference": {}
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         "names": [
@@ -222,7 +224,7 @@
     }
   ],
   "version": {
-    "minorNumber": 24,
+    "minorNumber": 53,
     "producer": "DuckDB"
   }
 }

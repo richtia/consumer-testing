@@ -27,11 +27,10 @@
                       "read": {
                         "baseSchema": {
                           "names": [
-                            "ps_partkey",
-                            "ps_suppkey",
-                            "ps_availqty",
-                            "ps_supplycost",
-                            "ps_comment"
+                            "n_nationkey",
+                            "n_name",
+                            "n_regionkey",
+                            "n_comment"
                           ]
                         },
                         "projection": {
@@ -43,7 +42,7 @@
                         },
                         "namedTable": {
                           "names": [
-                            "partsupp"
+                            "nation"
                           ]
                         }
                       }
@@ -64,8 +63,7 @@
                           {
                             "value": {
                               "literal": {
-                                "i32": 10,
-                                "nullable": true
+                                "i32": 10
                               }
                             }
                           }
@@ -93,7 +91,7 @@
                         "cast": {
                           "type": {
                             "i64": {
-                              "nullability": "NULLABILITY_REQUIRED"
+                              "nullability": "NULLABILITY_NULLABLE"
                             }
                           },
                           "input": {
@@ -113,14 +111,14 @@
           }
         },
         "names": [
-          "partsupp.ps_partkey",
+          "n_nationkey",
           "factorial_key"
         ]
       }
     }
   ],
   "version": {
-    "minorNumber": 35,
+    "minorNumber": 51,
     "producer": "datafusion"
   }
 }

@@ -79,14 +79,14 @@
           }
         },
         "names": [
-          "nation.n_name",
+          "n_name",
           "concat_nation"
         ]
       }
     }
   ],
   "version": {
-    "minorNumber": 33,
+    "minorNumber": 51,
     "producer": "datafusion"
   }
 }

@@ -6,7 +6,8 @@ import pytest
 from pyarrow import compute
 
 from substrait_consumer.common import SubstraitUtils
-from substrait_consumer.consumers import AceroConsumer, DuckDBConsumer
+from substrait_consumer.consumers.acero_consumer import AceroConsumer
+from substrait_consumer.consumers.duckdb_consumer import DuckDBConsumer
 from substrait_consumer.parametrization import custom_parametrization
 from substrait_consumer.verification import verify_equals
 from substrait_consumer.tests.integration.queries.tpch_test_cases import TPCH_QUERY_TESTS
@@ -67,9 +68,10 @@ class TestAceroConsumer:
         """
         # Format the substrait query to include the parquet file paths.
         # Calculate the result of running the substrait query plan.
-        substrait_query = self.utils.format_substrait_query(substrait_query, file_names)
+        consumer = AceroConsumer()
+        consumer.setup(self.db_connection, self.created_tables, file_names)
 
-        subtrait_query_result_tb = self.acero_consumer.run_substrait_query(
+        subtrait_query_result_tb = consumer.run_substrait_query(
             substrait_query
         )
 

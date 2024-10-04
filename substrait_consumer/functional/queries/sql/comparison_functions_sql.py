@@ -32,6 +32,7 @@ SQL_SCALAR = {
         SELECT PS_AVAILQTY
         FROM '{}'
         WHERE PS_AVAILQTY < 10
+        ORDER BY PS_AVAILQTY
         """,
         [DataFusionProducer, DuckDBProducer, IsthmusProducer],
     ),
@@ -40,6 +41,7 @@ SQL_SCALAR = {
         SELECT PS_AVAILQTY
         FROM '{}'
         WHERE PS_AVAILQTY <= 10
+        ORDER BY PS_AVAILQTY
         """,
         [DataFusionProducer, DuckDBProducer, IsthmusProducer],
     ),
@@ -48,6 +50,7 @@ SQL_SCALAR = {
         SELECT PS_AVAILQTY
         FROM '{}'
         WHERE PS_AVAILQTY > 9990
+        ORDER BY PS_AVAILQTY
         """,
         [DataFusionProducer, DuckDBProducer, IsthmusProducer],
     ),
@@ -56,6 +59,7 @@ SQL_SCALAR = {
         SELECT PS_AVAILQTY
         FROM '{}'
         WHERE PS_AVAILQTY >= 9990
+        ORDER BY PS_AVAILQTY
         """,
         [DataFusionProducer, DuckDBProducer, IsthmusProducer],
     ),
@@ -96,15 +100,16 @@ SQL_SCALAR = {
         """,
         [DuckDBProducer],
     ),
-    "coalesce": (
-        """
-        SELECT coalesce(NULL,NULL,'test_string')
-        """,
-        [DataFusionProducer, DuckDBProducer, IsthmusProducer],
-    ),
     "between": (
         """
         SELECT a FROM 't' WHERE a BETWEEN 1 AND 5
+        ORDER BY a
+        """,
+        [DataFusionProducer, DuckDBProducer, IsthmusProducer],
+    ),
+    "coalesce": (
+        """
+        SELECT coalesce(NULL,NULL,'test_string')
         """,
         [DataFusionProducer, DuckDBProducer, IsthmusProducer],
     ),

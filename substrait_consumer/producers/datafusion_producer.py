@@ -1,6 +1,6 @@
-import string
 from pathlib import Path
-from .producer import Producer, load_tables_from_parquet
+import substrait_validator as sv
+from .producer import Producer
 import substrait.gen.proto.plan_pb2 as plan_pb2
 from datafusion import SessionContext
 from datafusion import substrait as ss
@@ -25,7 +25,7 @@ class DataFusionProducer(Producer):
     def set_db_connection(self, db_connection):
         self._db_connection = db_connection
 
-    def produce_substrait(self, sql_query: str, ibis_expr: str = None) -> str:
+    def produce_substrait(self, sql_query: str, validate = False, ibis_expr: str = None) -> str:
         """
         Produce the DataFusion substrait plan using the given SQL query.
 
@@ -39,8 +39,18 @@ class DataFusionProducer(Producer):
         """
         substrait_proto = plan_pb2.Plan()
 
-        substrait_plan = ss.substrait.serde.serialize_to_plan(sql_query, self._ctx)
+        substrait_plan = ss.serde.serialize_to_plan(sql_query, self._ctx)
         substrait_plan_bytes = substrait_plan.encode()
+        if validate:
+            config = sv.Config()
+            # Error: missing required protobuf field: struct
+            config.override_diagnostic_level(1002, "error", "info")
+            # Warning: cannot automatically determine whether plan version
+            # is compatible with the Substrait version
+            config.override_diagnostic_level(7, "warning", "info") # warning
+            # Error: URI reference
+            config.override_diagnostic_level(3001, "error", "info")
+            sv.check_plan_valid(substrait_plan_bytes, config)
         substrait_proto.ParseFromString(substrait_plan_bytes)
 
         return MessageToJson(substrait_proto)
@@ -61,12 +71,9 @@ class DataFusionProducer(Producer):
             parquet_file_paths = SubstraitUtils.get_full_path(file_names)
             for file_name, file_path in zip(file_names, parquet_file_paths):
                 table_name = Path(file_name).stem
-                table_name = table_name.translate(
-                    str.maketrans("", "", string.punctuation)
-                )
-                if f"{self.__class__.__name__}{table_name}" not in created_tables:
-                    created_tables.add(f"{self.__class__.__name__}{table_name}")
-                    self._ctx.register_parquet(f"{table_name}", file_path)
+                if not self._ctx.table_exist(table_name):
+                    created_tables.add(table_name)
+                    self._ctx.register_parquet(table_name, file_path)
         else:
             if not self._ctx.table_exist("t"):
                 tables = pa.RecordBatch.from_arrays(
@@ -83,9 +90,7 @@ class DataFusionProducer(Producer):
     def format_sql(self, created_tables, sql_query, file_names):
         self.register_tables(created_tables, file_names)
         if len(file_names) > 0:
-            table_names = load_tables_from_parquet(
-                self._db_connection, created_tables, file_names
-            )
+            table_names = [Path(f).stem for f in file_names]
             sql_query = sql_query.format(*table_names)
         return sql_query
 
